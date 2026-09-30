@@ -591,15 +591,17 @@
   font-family: var(--font-display);
   font-weight: 800;
   font-kerning: normal;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  padding-inline: 0.045em 0.09em;
+  margin-inline: -0.045em -0.09em;
   color: transparent;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   background-image:
-    radial-gradient(circle at 16% 22%, rgb(255 255 255 / 0.98) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 76% 58%, rgb(247 232 255 / 0.95) 0 1.4px, transparent 2px),
-    radial-gradient(circle at 43% 80%, rgb(255 255 255 / 0.78) 0 0.8px, transparent 1.6px),
+    radial-gradient(ellipse at 24% 14%, rgb(242 222 255 / 0.92) 0 2%, transparent 19%),
+    radial-gradient(ellipse at 72% 68%, rgb(135 54 255 / 0.72) 0 5%, transparent 32%),
     linear-gradient(
       112deg,
       #21004d 3%,
@@ -610,10 +612,10 @@
       #25005b 97%
     );
   background-size:
-    92px 76px,
-    118px 104px,
-    74px 88px,
+    180% 180%,
+    180% 180%,
     240% 240%;
+  background-repeat: no-repeat;
   animation: galaxy-drift 8s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 16px rgb(96 28 230 / 0.34)) drop-shadow(0 0 32px rgb(197 105 255 / 0.12));
 }
@@ -621,23 +623,20 @@
 @keyframes galaxy-drift {
   0% {
     background-position:
-      0 0,
-      100% 30%,
-      20% 100%,
+      14% 18%,
+      82% 66%,
       0% 50%;
   }
   50% {
     background-position:
-      38px -22px,
-      52% 68%,
-      -18px 42%,
+      36% 4%,
+      60% 82%,
       58% 44%;
   }
   100% {
     background-position:
-      76px -44px,
-      0% 100%,
-      -36px 0%,
+      58% 18%,
+      22% 92%,
       100% 52%;
   }
 }
