@@ -43,6 +43,10 @@ export function ScrollVideoSection({
   useEffect(() => {
     let cancelled = false;
     const mobileQuery = window.matchMedia("(max-width: 1024px)");
+    const reducedData =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      navigator.connection?.saveData ||
+      ["slow-2g", "2g", "3g"].includes(navigator.connection?.effectiveType ?? "");
     let activeImages: HTMLImageElement[] = [];
 
     const loadFrames = () => {
@@ -53,7 +57,8 @@ export function ScrollVideoSection({
 
       const useMobileFrames = mobileQuery.matches && Boolean(mobileFrameCount);
       const dir = useMobileFrames ? "/frames-mobile" : "/frames-desktop";
-      const actualFrameCount = useMobileFrames ? mobileFrameCount! : frameCount;
+      const fullCount = useMobileFrames ? mobileFrameCount! : frameCount;
+      const actualFrameCount = reducedData ? Math.min(fullCount, 72) : fullCount;
       resolvedCountRef.current = actualFrameCount;
       currentRef.current = 0;
       targetRef.current = 0;
@@ -176,10 +181,10 @@ export function ScrollVideoSection({
     <section
       ref={sectionRef}
       className={cn("relative w-full bg-background", className)}
-      style={{ height: `${heightMultiplier * 100}vh` }}
+      style={{ height: `${heightMultiplier * 100}svh` }}
       aria-label="Octapus system animation"
     >
-      <div className="sticky top-16 isolate h-[calc(100vh-4rem)] w-full overflow-hidden bg-background p-3 md:p-6">
+      <div className="sticky top-16 isolate h-[calc(100svh-4rem)] w-full overflow-hidden bg-background p-3 md:p-6">
         <DotPattern className="z-0 fill-neutral-400/45 animate-scrolling-dots motion-reduce:animate-none dark:fill-white/10" />
 
         <motion.div

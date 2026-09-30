@@ -3,6 +3,8 @@ import { ArrowRight } from "lucide-react";
 import { JsonLd } from "@/components/site/JsonLd";
 import { Container, Section } from "@/components/site/Section";
 import { Button } from "@/components/ui/button";
+import { Skiper39 } from "@/components/ui/skiper39";
+import { RevealButton } from "@/components/site/RevealButton";
 import { OisConnection } from "@/components/site/OisConnection";
 import { RelatedLinks } from "@/components/site/RelatedLinks";
 import { StudiosLeadForm } from "@/components/site/StudiosLeadForm";
@@ -73,20 +75,24 @@ function StudiosPage() {
           {studios.intro}
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg" className="rounded-full px-7">
-            <a
-              href="#start-a-studios-project"
-              onClick={() => trackEvent("product_engagement", { source: "studios_hero_cta" })}
-            >
-              Start a Studios Project <ArrowRight className="ml-1 size-4" />
-            </a>
-          </Button>
-
-          <Button asChild size="lg" variant="outline" className="rounded-full px-7">
-            <Link to="/marketing">See the growth track</Link>
-          </Button>
+          <RevealButton
+            to="#start-a-studios-project"
+            external
+            icon={ArrowRight}
+            label="Start a Studios Project"
+            onClick={() => trackEvent("product_engagement", { source: "studios_hero_cta" })}
+            className="h-12 min-w-12 max-w-12 px-3 hover:max-w-72"
+          />
+          <RevealButton
+            to="/marketing"
+            label="See the growth track"
+            variant="outline"
+            className="h-12 min-w-12 max-w-12 px-3 hover:max-w-64"
+          />
         </div>
       </Container>
+
+      <Skiper39 />
 
       <Section
         eyebrow="What Octapus Studios provides"

@@ -4,7 +4,6 @@ import { Menu, X, ChevronRight, ChevronDown, CalendarClock } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion";
 import { Wordmark } from "./Wordmark";
 import { ThemeToggle } from "./ThemeToggle";
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RevealButton } from "@/components/site/RevealButton";
 import { trackEvent } from "@/lib/analytics";
@@ -42,7 +41,11 @@ const COMPANY_ITEMS: SubItem[] = [
 
 const PRODUCTS_ITEMS: SubItem[] = [
   { id: "all-products", label: "All Products", to: "/products" },
-  { id: "billing-software", label: PM.get("billing-software")?.name ?? "Beep", to: "/products/billing-software" },
+  {
+    id: "billing-software",
+    label: PM.get("billing-software")?.name ?? "Beep",
+    to: "/products/billing-software",
+  },
   { id: "obms-erp", label: PM.get("obms-erp")?.name ?? "O.B.M.S ERP", to: "/products/obms-erp" },
   { id: "lms", label: PM.get("lms")?.name ?? "LMS", to: "/products/lms" },
   { id: "ois", label: "OIS", to: "/ois" },
@@ -466,6 +469,7 @@ export function Nav() {
     clearOpen();
     clearClose();
     setActiveCategory(null);
+    setMobileOpen(false);
   }, []);
 
   // ── Side-effects ─────────────────────────────────────────────────────────
@@ -584,7 +588,8 @@ export function Nav() {
       <div
         className={cn(
           "mx-auto max-w-[1440px] rounded-full bg-background/82 shadow-[0_1px_0_color-mix(in_oklab,var(--color-foreground)_8%,transparent),0_14px_40px_-30px_color-mix(in_oklab,var(--color-foreground)_45%,transparent)] backdrop-blur-2xl transition-all duration-300",
-          isScrolled && "bg-background/94 shadow-[0_1px_0_color-mix(in_oklab,var(--color-foreground)_10%,transparent),0_18px_46px_-28px_color-mix(in_oklab,var(--color-foreground)_50%,transparent)]",
+          isScrolled &&
+            "bg-background/94 shadow-[0_1px_0_color-mix(in_oklab,var(--color-foreground)_10%,transparent),0_18px_46px_-28px_color-mix(in_oklab,var(--color-foreground)_50%,transparent)]",
           activeCategory && "bg-background/96",
         )}
       >
@@ -675,11 +680,12 @@ export function Nav() {
                   ))}
                 </div>
                 <div className="mt-6 pt-4 border-t hairline">
-                  <Button asChild className="w-full rounded-full">
-                    <Link to="/book" onClick={() => setMobileOpen(false)}>
-                      Book a Strategy Call
-                    </Link>
-                  </Button>
+                  <RevealButton
+                    to="/book"
+                    icon={CalendarClock}
+                    label="Book a Strategy Call"
+                    onClick={() => setMobileOpen(false)}
+                  />
                 </div>
               </SheetContent>
             </Sheet>

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/site/Section";
-import { Button } from "@/components/ui/button";
+import { RevealButton } from "@/components/site/RevealButton";
 import { cn } from "@/lib/utils";
 import { products } from "@/lib/site";
 
@@ -60,7 +60,7 @@ export function ProductsShowcase({
                     tall ? "mt-8 aspect-[16/9]" : "mt-6 aspect-[2/1]",
                     p.imageFit === "contain" || (!p.imageFit && p.image.endsWith(".png"))
                       ? "bg-white"
-                      : "bg-[var(--color-surface)]"
+                      : "bg-[var(--color-surface)]",
                   )}
                 >
                   {p.image.endsWith(".mp4") || p.image.endsWith(".webm") ? (
@@ -119,11 +119,13 @@ export function ProductsShowcase({
       </div>
       {showViewAll && (
         <div className="mt-10 text-center">
-          <Button asChild variant="outline" size="lg" className="rounded-full">
-            <Link to="/products">
-              Every Octapus product <ArrowRight className="ml-1 size-4" />
-            </Link>
-          </Button>
+          <RevealButton
+            to="/products"
+            icon={ArrowRight}
+            label="Every Octapus product"
+            variant="outline"
+            className="h-12 min-w-12 max-w-12 px-3 hover:max-w-72"
+          />
         </div>
       )}
     </Section>

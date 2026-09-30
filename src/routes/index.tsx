@@ -3,17 +3,17 @@ import * as React from "react";
 import { JsonLd } from "@/components/site/JsonLd";
 import { ScrollVideoSection } from "@/components/site/ScrollVideoSection";
 import { Section } from "@/components/site/Section";
-import { Button } from "@/components/ui/button";
 import { site, products, hiddenProductSlugs, stats } from "@/lib/site";
 import { buildMeta, breadcrumbSchema } from "@/lib/seo";
-import { ArrowRight } from "lucide-react";
-import { DotPattern } from "@/components/ui/dot-pattern";
+import { ArrowRight, Grid3X3, Mail } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 
 import { WhatWeBuildSection } from "@/components/site/WhatWeBuildSection";
 import { OctapusAdvantageSection } from "@/components/site/OctapusAdvantageSection";
 import { BuildProcessSection } from "@/components/site/BuildProcessSection";
+import { RevealButton } from "@/components/site/RevealButton";
+import { servicePages } from "@/lib/service-pages";
 
 import productErpImg from "@/assets/product-erp.png";
 import productCrmImg from "@/assets/product-crm.png";
@@ -32,8 +32,6 @@ const FALLBACK_IMAGES = [
 ];
 
 const visibleProducts = products.filter((p) => !hiddenProductSlugs.includes(p.slug));
-
-const heroTitle = "Build For Today";
 
 const statGridVariants = {
   hidden: {},
@@ -57,21 +55,23 @@ export const Route = createFileRoute("/")({
     ...buildMeta({
       title: "Octapus — Custom Software, AI Systems and Digital Platforms",
       description:
-        "Octapus is an AI-first software company combining AI development speed with experienced human engineering to deliver production-ready software, AI systems, and business platforms.",
+        "Octapus designs and develops mobile apps, custom software, ERP systems, business automation, web platforms and creative production around real business requirements.",
       path: "/",
       ogType: "website",
       keywords: [
         "Octapus",
         "custom software development",
-        "AI systems",
-        "AI-powered software",
-        "digital platforms",
-        "business software",
+        "software development company",
+        "mobile app development",
+        "iOS app development",
+        "Android app development",
+        "ERP development",
+        "custom ERP systems",
         "business automation",
-        "ERP",
-        "CRM",
-        "AI agents",
-        "custom business software",
+        "custom business systems",
+        "web application development",
+        "technology consulting",
+        "creative production",
       ],
     }),
     links: [{ rel: "canonical", href: "/" }],
@@ -108,6 +108,24 @@ function Home() {
         data={{
           "@context": "https://schema.org",
           "@type": "ItemList",
+          name: "Octapus software and digital services",
+          itemListElement: servicePages.map((service, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "Service",
+              name: service.title,
+              description: service.summary,
+              url: `/services/${service.slug}`,
+              provider: { "@type": "Organization", name: site.legalName },
+            },
+          })),
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
           name: "Octapus Products",
           itemListElement: visibleProducts.slice(0, 8).map((p, i) => ({
             "@type": "ListItem",
@@ -120,122 +138,87 @@ function Home() {
       <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
 
       {/* ── 01. HERO ── */}
-      <Section className="min-h-[calc(100svh-4rem)] overflow-hidden bg-background !py-0">
+      <header className="relative isolate overflow-hidden border-b border-black/[0.06] bg-white text-black">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-[12%] top-[15%] h-[56%] rounded-[50%] bg-primary/[0.055] blur-3xl"
+          className="absolute inset-0 bg-[radial-gradient(circle,#242424_0.7px,transparent_0.8px)] bg-[size:24px_24px] opacity-[0.22]"
         />
-        <DotPattern className="fill-neutral-400/45 animate-scrolling-dots motion-reduce:animate-none dark:fill-white/10" />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 aspect-square w-[min(82vw,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/[0.055]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 aspect-square w-[min(60vw,35rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/[0.055]"
+        />
+        <motion.span
+          aria-hidden="true"
+          className="absolute left-[18%] top-[31%] size-2 rounded-full bg-[#222]"
+          animate={reducedMotion ? undefined : { y: [0, -10, 0], x: [0, 4, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.span
+          aria-hidden="true"
+          className="absolute right-[16%] top-[36%] size-3 rounded-full bg-[#222]"
+          animate={reducedMotion ? undefined : { y: [0, 12, 0], x: [0, -6, 0] }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.span
+          aria-hidden="true"
+          className="absolute bottom-[22%] right-[25%] size-1.5 rounded-full bg-[#222]"
+          animate={reducedMotion ? undefined : { y: [0, -8, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col items-center justify-center py-20 text-center md:py-24">
+        <div className="container-page relative flex min-h-[calc(100svh-4rem)] items-center justify-center py-20 sm:py-24">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:text-xs"
+            initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10 flex w-full max-w-6xl flex-col items-center text-center"
           >
-            <span aria-hidden="true" className="h-px w-8 bg-primary/45 sm:w-12" />
-            Octapus / Software Engineering
-            <span aria-hidden="true" className="h-px w-8 bg-primary/45 sm:w-12" />
+            <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-black/60 sm:text-xs">
+              Custom software development
+            </p>
+            <h1 className="mt-6 text-balance font-display text-[clamp(4rem,10vw,9rem)] font-black leading-[0.82] tracking-[-0.065em] text-black">
+              Build for <span className="galaxy-text">Today</span>
+            </h1>
+            <p className="mt-8 max-w-[58ch] text-pretty text-base leading-7 text-black/60 sm:text-lg lg:text-xl lg:leading-8">
+              Practical software, mobile apps, ERP systems and digital platforms built around the
+              way your business works.
+            </p>
+
+            <div className="mt-10 flex items-start justify-center gap-9 sm:gap-14">
+              <div className="flex w-24 flex-col items-center gap-3 sm:w-32">
+                <Link
+                  to="/book"
+                  aria-label="Start a project"
+                  className="group flex size-16 items-center justify-center rounded-full bg-[#171717] text-white shadow-[0_16px_34px_-20px_rgba(0,0,0,0.75)] transition-transform duration-300 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
+                >
+                  <ArrowRight
+                    className="size-5 transition-transform duration-300 group-hover:translate-x-1 sm:size-6"
+                    aria-hidden="true"
+                  />
+                </Link>
+                <span className="text-sm font-semibold text-black">Start a project</span>
+              </div>
+              <div className="flex w-24 flex-col items-center gap-3 sm:w-32">
+                <a
+                  href="#services"
+                  aria-label="Explore services"
+                  className="group flex size-16 items-center justify-center rounded-full border border-black/30 bg-white text-black transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
+                >
+                  <Grid3X3
+                    className="size-5 transition-transform duration-300 group-hover:rotate-12 sm:size-6"
+                    aria-hidden="true"
+                  />
+                </a>
+                <span className="text-sm font-semibold text-black">Explore services</span>
+              </div>
+            </div>
           </motion.div>
-
-          <motion.h1
-            initial={reducedMotion ? false : "hidden"}
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.065, delayChildren: 0.16 } },
-            }}
-            aria-label={heroTitle}
-            className="mt-8 flex flex-row items-center justify-center max-w-[11ch] text-balance font-display text-[clamp(4.25rem,10vw,9rem)] font-semibold leading-[0.84] tracking-[-0.038em] text-foreground [text-shadow:0_4px_24px_rgba(0,0,0,0.06)] dark:[text-shadow:0_4px_24px_rgba(255,255,255,0.08)] sm:max-w-none sm:whitespace-nowrap"
-          >
-            {Array.from(heroTitle).map((character, index) => (
-              <motion.span
-                key={`${character}-${index}`}
-                aria-hidden="true"
-                variants={{
-                  hidden: {
-                    opacity: character === " " ? 0 : 0.16,
-                    filter: "blur(12px)",
-                    scale: 1.025,
-                  },
-                  visible: {
-                    opacity: 1,
-                    filter: "blur(0px)",
-                    scale: 1,
-                    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
-                  },
-                }}
-                className={
-                  character === " "
-                    ? "inline-block w-[0.2em]"
-                    : index >= 10
-                      ? "inline-block text-primary"
-                      : "inline-block"
-                }
-              >
-                {character === " " ? "\u00a0" : character}
-              </motion.span>
-            ))}
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="mx-auto mt-10 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl"
-          >
-            AI-first development and experienced engineering, working together to move scalable
-            software from idea to production.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          >
-            <Button
-              asChild
-              size="lg"
-              className="rounded-full px-8 h-12 text-base font-semibold shadow-lg shadow-primary/25"
-            >
-              <Link to="/book">
-                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="rounded-full px-8 h-12 text-base font-medium"
-            >
-              <Link to="/contact">Discuss Software Idea</Link>
-            </Button>
-          </motion.div>
-
-          <motion.ul
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-            className="mt-14 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 font-mono text-[0.65rem] font-medium uppercase tracking-[0.16em] text-muted-foreground/75 sm:gap-x-6 sm:text-[0.7rem]"
-          >
-            {["Custom software", "AI systems", "Digital platforms"].map((capability, index) => (
-              <React.Fragment key={capability}>
-                {index > 0 && (
-                  <li aria-hidden="true" className="h-1 w-1 rounded-full bg-primary/55" />
-                )}
-                <li>{capability}</li>
-              </React.Fragment>
-            ))}
-          </motion.ul>
         </div>
-      </Section>
+      </header>
 
       {/* ── 02. VIDEO SECTION ── */}
       <ScrollVideoSection frameCount={600} mobileFrameCount={530} heightMultiplier={4} />
@@ -295,7 +278,6 @@ function Home() {
         </motion.div>
       </Section>
 
-
       {/* ── 05. THE OCTAPUS ADVANTAGE ── */}
       <OctapusAdvantageSection />
 
@@ -315,23 +297,19 @@ function Home() {
           </div>
 
           <div className="pt-6 flex flex-col sm:flex-row gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="rounded-full px-10 h-14 text-base font-semibold shadow-xl shadow-primary/25"
-            >
-              <Link to="/book">
-                Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
+            <RevealButton
+              to="/book"
+              icon={ArrowRight}
+              label="Start Your Project"
+              className="h-14 min-w-14 max-w-14 px-5 hover:max-w-64 shadow-xl shadow-primary/25"
+            />
+            <RevealButton
+              to="/contact"
+              icon={Mail}
+              label="Contact Sales"
               variant="outline"
-              className="rounded-full px-8 h-14 text-base font-medium"
-            >
-              <Link to="/contact">Contact Sales</Link>
-            </Button>
+              className="h-14 min-w-14 max-w-14 px-5 hover:max-w-64"
+            />
           </div>
         </div>
       </Section>

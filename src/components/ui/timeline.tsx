@@ -403,7 +403,7 @@ export function Timeline({
   );
 
   if (resolvedOrientation === "horizontal") {
-    const { dir, ...restProps } = props as any;
+    const { dir: _dir, ...restProps } = props;
     return (
       <ScrollArea orientation="horizontal" className={cn("w-full", className)} {...restProps}>
         {timelineContent}

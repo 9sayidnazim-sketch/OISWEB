@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { products } from "@/lib/site";
+import { servicePages } from "@/lib/service-pages";
 
 const BASE_URL = "https://octapus.ae";
 
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries = [
           ...staticPaths.map((p) => ({ path: p })),
           ...products.map((p) => ({ path: `/products/${p.slug}` })),
+          ...servicePages.map((service) => ({ path: `/services/${service.slug}` })),
         ];
         const urls = entries.map((e) =>
           [

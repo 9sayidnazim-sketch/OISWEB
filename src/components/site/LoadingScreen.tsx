@@ -12,7 +12,7 @@ export function LoadingScreen() {
     }
     return true;
   });
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const progressTextRef = useRef<HTMLSpanElement>(null);
@@ -67,7 +67,7 @@ export function LoadingScreen() {
         >
           {/* Fullscreen Video Background */}
           <div className="absolute inset-0 z-0">
-             <video
+            <video
               ref={videoRef}
               src="/loading-intro.mp4"
               autoPlay

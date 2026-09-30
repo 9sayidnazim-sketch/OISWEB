@@ -121,7 +121,8 @@ export const Route = createFileRoute("/api/public/contact")({
         }
 
         const routedTo = routeEnquiryTo(data.enquiryType);
-        const recipientEmail = data.enquiryType === "career" ? "hr@octapus.ae" : (process.env.SMTP_TO || routedTo);
+        const recipientEmail =
+          data.enquiryType === "career" ? "hr@octapus.ae" : process.env.SMTP_TO || routedTo;
 
         try {
           const transporter = nodemailer.createTransport({
@@ -134,7 +135,8 @@ export const Route = createFileRoute("/api/public/contact")({
             },
           });
 
-          const attachments: Array<{ filename: string; content: Buffer; contentType?: string }> = [];
+          const attachments: Array<{ filename: string; content: Buffer; contentType?: string }> =
+            [];
           if (uploadedCv && uploadedCv.size > 0) {
             const buffer = Buffer.from(await uploadedCv.arrayBuffer());
             attachments.push({
@@ -188,10 +190,13 @@ ${data.description}
           await transporter.sendMail(mailOptions);
         } catch (error) {
           console.error("Error sending email:", error);
-          return new Response(JSON.stringify({ error: "Failed to send email. Please try again later." }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: "Failed to send email. Please try again later." }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
 
         console.info("[octapus.contact]", {

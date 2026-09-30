@@ -101,18 +101,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Octapus — Software, AI and business systems in the UAE" },
       {
         property: "og:image",
-        content:
-          "https://res.cloudinary.com/dk0v8kljx/image/upload/v1781652154/New_Logo_es6c4z.png",
+        content: "https://octapus.ae/octapus-indigo-logo.svg",
       },
       {
         name: "twitter:image",
-        content:
-          "https://res.cloudinary.com/dk0v8kljx/image/upload/v1781652154/New_Logo_es6c4z.png",
+        content: "https://octapus.ae/octapus-indigo-logo.svg",
       },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/octapus-indigo-logo.svg", type: "image/svg+xml" },
       { rel: "preload", href: "/loading-intro.mp4", as: "video", type: "video/mp4" },
       { rel: "preconnect", href: "https://rsms.me" },
       { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
@@ -141,14 +139,12 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         {/* Theme: set before first paint based on user override or GST time */}
         <script
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: `(function(){try{const t=localStorage.getItem('octapus-theme');if(t==='dark'){document.documentElement.classList.add('dark');}else if(t==='light'){document.documentElement.classList.remove('dark');}else{const h=(new Date().getUTCHours()+4)%24;if(h<6||h>=18){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}}catch(e){}})();`,
           }}
         />
         {/* Consent Mode v2 default (denied) — bootstraps before GTM loads */}
         <script
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});`,
           }}
@@ -209,7 +205,7 @@ function RootComponent() {
             name: site.legalName,
             alternateName: site.name,
             url: "https://octapus.ae/",
-            logo: "https://res.cloudinary.com/dk0v8kljx/image/upload/v1781652154/New_Logo_es6c4z.png",
+            logo: "https://octapus.ae/octapus-indigo-logo.svg",
             email: site.emails.info,
             telephone: site.phones.general,
             address: [
@@ -233,8 +229,7 @@ function RootComponent() {
             "@id": "https://octapus.ae/#localbusiness",
             name: site.legalName,
             url: "https://octapus.ae/",
-            image:
-              "https://res.cloudinary.com/dk0v8kljx/image/upload/v1781652154/New_Logo_es6c4z.png",
+            image: "https://octapus.ae/octapus-indigo-logo.svg",
             telephone: site.phones.general,
             email: site.emails.info,
             areaServed: ["AE", "GCC"],
