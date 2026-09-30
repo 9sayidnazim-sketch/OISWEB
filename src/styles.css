@@ -630,9 +630,56 @@
   }
 }
 
+.octapus-loading-screen {
+  --loading-dot: 22px;
+  background-color: #fff;
+  background-image: radial-gradient(circle, #b9b4d6 1px, transparent 1.6px);
+  background-position: 0 0;
+  background-size: var(--loading-dot) var(--loading-dot);
+  animation: octapus-loading-drift 3s linear infinite;
+}
+
+.octapus-loading-icon,
+.octapus-loading-mark {
+  color: #601ce6;
+  opacity: 0;
+  animation: octapus-loading-cut 2.4s steps(1, end) infinite;
+  animation-delay: calc(var(--loading-step) * 0.2s);
+}
+
+.octapus-loading-mark {
+  filter: saturate(1.12) drop-shadow(0 0 16px rgb(96 28 230 / 0.18));
+}
+
+@keyframes octapus-loading-drift {
+  to {
+    background-position: var(--loading-dot) var(--loading-dot);
+  }
+}
+
+@keyframes octapus-loading-cut {
+  0% {
+    opacity: 1;
+  }
+  8.33%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .galaxy-text {
     animation: none;
+  }
+
+  .octapus-loading-screen,
+  .octapus-loading-icon,
+  .octapus-loading-mark {
+    animation: none;
+  }
+
+  .octapus-loading-icon:first-child {
+    opacity: 1;
   }
 }
 

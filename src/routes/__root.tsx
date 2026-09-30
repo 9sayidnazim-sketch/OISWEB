@@ -111,7 +111,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/octapus-indigo-logo.svg", type: "image/svg+xml" },
-      { rel: "preload", href: "/loading-intro.mp4", as: "video", type: "video/mp4" },
       { rel: "preconnect", href: "https://rsms.me" },
       { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
