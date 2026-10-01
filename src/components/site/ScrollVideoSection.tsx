@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { DotPattern } from "@/components/ui/dot-pattern";
@@ -26,8 +26,9 @@ export function ScrollVideoSection({
   const rafRef = useRef<number | null>(null);
   const visibleRef = useRef(false);
   const resolvedCountRef = useRef(frameCount);
+  const lastDrawnFrameRef = useRef(-1);
 
-  const [scrollPct, setScrollPct] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress: revealProgress } = useScroll({
     target: sectionRef,
@@ -39,6 +40,35 @@ export function ScrollVideoSection({
     [0, 1],
     shouldReduceMotion ? [32, 32] : [72, 32],
   );
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const targetIndex = Math.min(
+      imagesRef.current.length - 1,
+      Math.max(0, Math.round(currentRef.current)),
+    );
+    const exactImage = imagesRef.current[targetIndex];
+    const image = exactImage?.naturalWidth
+      ? exactImage
+      : imagesRef.current.find((candidate, index) => {
+          const distance = Math.abs(index - targetIndex);
+          return candidate?.naturalWidth && distance < 4;
+        });
+    if (!image?.naturalWidth) return;
+    if (exactImage?.naturalWidth && lastDrawnFrameRef.current === targetIndex) return;
+
+    lastDrawnFrameRef.current = exactImage?.naturalWidth ? targetIndex : -1;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    const scale = Math.max(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+    const width = image.naturalWidth * scale;
+    const height = image.naturalHeight * scale;
+    ctx.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,23 +88,41 @@ export function ScrollVideoSection({
       const useMobileFrames = mobileQuery.matches && Boolean(mobileFrameCount);
       const dir = useMobileFrames ? "/frames-mobile" : "/frames-desktop";
       const fullCount = useMobileFrames ? mobileFrameCount! : frameCount;
-      const actualFrameCount = reducedData ? Math.min(fullCount, 72) : fullCount;
+      const actualFrameCount = reducedData
+        ? Math.min(fullCount, 72)
+        : mobileQuery.matches
+          ? Math.min(fullCount, 240)
+          : fullCount;
       resolvedCountRef.current = actualFrameCount;
       currentRef.current = 0;
       targetRef.current = 0;
+      lastDrawnFrameRef.current = -1;
 
-      activeImages = Array.from({ length: actualFrameCount }, (_, index) => {
-        const image = new Image();
-        image.decoding = "async";
-        image.src = `${dir}/frame-${pad(index + 1)}.jpg`;
-        const done = () => {
-          if (!cancelled && index === 0 && image.naturalWidth) draw();
-        };
-        image.onload = done;
-        image.onerror = done;
-        return image;
-      });
+      activeImages = new Array(actualFrameCount);
       imagesRef.current = activeImages;
+
+      let nextFrame = 0;
+      const concurrency = mobileQuery.matches ? 3 : 5;
+      const loadNext = () => {
+        if (cancelled || nextFrame >= actualFrameCount) return;
+        const index = nextFrame++;
+        const image = new Image();
+        const sourceFrame =
+          Math.round((index / Math.max(1, actualFrameCount - 1)) * (fullCount - 1)) + 1;
+        image.decoding = "async";
+        image.onload = () => {
+          if (!cancelled) {
+            draw();
+            loadNext();
+          }
+        };
+        image.onerror = () => {
+          if (!cancelled) loadNext();
+        };
+        activeImages[index] = image;
+        image.src = `${dir}/frame-${pad(sourceFrame)}.jpg`;
+      };
+      Array.from({ length: concurrency }, loadNext);
     };
 
     loadFrames();
@@ -88,59 +136,50 @@ export function ScrollVideoSection({
         image.onerror = null;
       });
     };
-  }, [frameCount, mobileFrameCount]);
+  }, [draw, frameCount, mobileFrameCount]);
 
   function resize() {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, coarsePointer ? 2 : 3);
     // Use layout dimensions rather than the transformed bounding box. The
     // reveal animation scales the parent, and measuring that smaller box made
     // the canvas backing store permanently softer once the screen expanded.
     canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
     canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    lastDrawnFrameRef.current = -1;
     draw();
-  }
-
-  function draw() {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const idx = Math.min(imagesRef.current.length - 1, Math.max(0, Math.round(currentRef.current)));
-    const img = imagesRef.current[idx];
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (!img || !img.naturalWidth) return;
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    const cw = canvas.width;
-    const ch = canvas.height;
-    // Use cover behavior to prevent letterboxing on mobile
-    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    const w = img.naturalWidth * scale;
-    const h = img.naturalHeight * scale;
-    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
   }
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
+    const scheduleFrame = () => {
+      if (!visibleRef.current || document.hidden || rafRef.current !== null) return;
+      const tick = () => {
+        const difference = targetRef.current - currentRef.current;
+        if (Math.abs(difference) <= 0.15) {
+          currentRef.current = targetRef.current;
+          draw();
+          rafRef.current = null;
+          return;
+        }
+        currentRef.current += difference * 0.22;
+        draw();
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
     const computeTarget = () => {
       const rect = section.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
       targetRef.current = p * (resolvedCountRef.current - 1);
-      setScrollPct(p);
-    };
-
-    const tick = () => {
-      const diff = targetRef.current - currentRef.current;
-      if (Math.abs(diff) > 0.01) {
-        currentRef.current += diff * 0.15;
-        draw();
-      }
-      rafRef.current = visibleRef.current ? requestAnimationFrame(tick) : null;
+      if (p > 0.02) setHasScrolled(true);
+      scheduleFrame();
     };
 
     const onScroll = () => {
@@ -153,7 +192,6 @@ export function ScrollVideoSection({
         visibleRef.current = entry.isIntersecting;
         if (entry.isIntersecting) {
           computeTarget();
-          if (rafRef.current === null) rafRef.current = requestAnimationFrame(tick);
         } else if (rafRef.current !== null) {
           cancelAnimationFrame(rafRef.current);
           rafRef.current = null;
@@ -166,16 +204,18 @@ export function ScrollVideoSection({
     resize();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", scheduleFrame);
 
     return () => {
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", scheduleFrame);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frameCount]);
+  }, [draw, frameCount]);
 
   return (
     <section
@@ -212,7 +252,7 @@ export function ScrollVideoSection({
           <div
             className={cn(
               "absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground transition-opacity duration-300 pointer-events-none",
-              scrollPct > 0.02 ? "opacity-0" : "opacity-100",
+              hasScrolled ? "opacity-0" : "opacity-100",
             )}
           >
             <span className="text-xs uppercase tracking-[0.2em] font-mono opacity-60">
