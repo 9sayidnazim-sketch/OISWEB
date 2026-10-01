@@ -18,6 +18,7 @@ import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { LoadingScreen } from "@/components/site/LoadingScreen";
 import { site } from "@/lib/site";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
+import { absoluteUrl, SITE_URL } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -111,18 +112,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/octapus-indigo-logo.svg", type: "image/svg+xml" },
-      { rel: "preconnect", href: "https://rsms.me" },
-      { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      } as unknown as Record<string, string>,
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Epilogue:wght@400;500;600&display=swap",
-      },
     ],
   }),
   shellComponent: RootShell,
@@ -206,8 +195,8 @@ function RootComponent() {
             "@type": "Organization",
             name: site.legalName,
             alternateName: site.name,
-            url: "https://octapus.ae/",
-            logo: "https://octapus.ae/octapus-indigo-logo.svg",
+            url: absoluteUrl("/"),
+            logo: absoluteUrl("/octapus-indigo-logo.svg"),
             email: site.emails.info,
             telephone: site.phones.general,
             address: [
@@ -228,10 +217,10 @@ function RootComponent() {
           {
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
-            "@id": "https://octapus.ae/#localbusiness",
+            "@id": `${SITE_URL}/#localbusiness`,
             name: site.legalName,
-            url: "https://octapus.ae/",
-            image: "https://octapus.ae/octapus-indigo-logo.svg",
+            url: absoluteUrl("/"),
+            image: absoluteUrl("/octapus-indigo-logo.svg"),
             telephone: site.phones.general,
             email: site.emails.info,
             areaServed: ["AE", "GCC"],

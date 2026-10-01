@@ -14,7 +14,9 @@ import {
   UsersRound,
 } from "lucide-react";
 
-const LOAD_DURATION_MS = 2400;
+// Keep the branded transition without holding the first meaningful paint for
+// multiple seconds. The page is already server rendered beneath this layer.
+const LOAD_DURATION_MS = 450;
 
 const loadingIcons = [
   BrainCircuit,
@@ -41,7 +43,7 @@ export function LoadingScreen() {
     if (!isVisible) return;
     const timeout = window.setTimeout(
       () => setIsVisible(false),
-      reducedMotion ? 250 : LOAD_DURATION_MS,
+      reducedMotion ? 0 : LOAD_DURATION_MS,
     );
     return () => window.clearTimeout(timeout);
   }, [isVisible, reducedMotion]);

@@ -7,6 +7,11 @@ import { cn } from "@/lib/utils";
 
 const useIsoLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
+function responsiveSrcSet(src: string) {
+  if (!src.endsWith("-800.webp")) return undefined;
+  return `${src.replace("-800.webp", "-480.webp")} 480w, ${src} 800w`;
+}
+
 export interface CoverflowSlide {
   src: string;
   alt: string;
@@ -83,6 +88,34 @@ export function CoverflowCarousel({
   } | null>(null);
 
   const [selected, setSelected] = React.useState(0);
+  const [canLoadMedia, setCanLoadMedia] = React.useState(false);
+  const [loadedSlides, setLoadedSlides] = React.useState<Set<number>>(() => new Set());
+
+  React.useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCanLoadMedia(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (!canLoadMedia) return;
+    setLoadedSlides((current) => {
+      if (current.has(selected)) return current;
+      const next = new Set(current);
+      next.add(selected);
+      return next;
+    });
+  }, [canLoadMedia, selected]);
 
   /** Nearest whole card, folded back into 0..count-1. */
   const indexAt = React.useCallback(
@@ -321,31 +354,48 @@ export function CoverflowCarousel({
                 )}
                 style={{ width: "var(--cf-card)" }}
               >
-                {slide.src.endsWith(".mp4") || slide.src.endsWith(".webm") ? (
+                {loadedSlides.has(index) &&
+                (slide.src.endsWith(".mp4") || slide.src.endsWith(".webm")) ? (
                   <video
                     src={slide.src}
-                    autoPlay
+                    autoPlay={index === selected}
                     muted
                     loop
                     playsInline
+                    preload="none"
+                    aria-label={slide.alt}
                     className="h-full w-full select-none object-cover"
                   />
-                ) : slide.imageFit === "contain" ? (
+                ) : loadedSlides.has(index) && slide.imageFit === "contain" ? (
                   <div className="flex size-full items-center justify-center p-4 sm:p-5 select-none">
                     <img
                       src={slide.src}
+                      srcSet={responsiveSrcSet(slide.src)}
+                      sizes="(max-width: 640px) 148px, 260px"
                       alt={slide.alt}
+                      width={800}
+                      height={800}
+                      loading="lazy"
+                      decoding="async"
                       draggable={false}
                       className="max-h-full max-w-full object-contain select-none"
                     />
                   </div>
-                ) : (
+                ) : loadedSlides.has(index) ? (
                   <img
                     src={slide.src}
+                    srcSet={responsiveSrcSet(slide.src)}
+                    sizes="(max-width: 640px) 148px, 260px"
                     alt={slide.alt}
+                    width={800}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
                     draggable={false}
                     className="h-full w-full select-none object-cover"
                   />
+                ) : (
+                  <div className="size-full bg-muted" aria-hidden="true" />
                 )}
               </div>
             ))}

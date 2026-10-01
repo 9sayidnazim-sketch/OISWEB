@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { products } from "@/lib/site";
 import { servicePages } from "@/lib/service-pages";
-
-const BASE_URL = "https://octapus.ae";
+import { absoluteUrl } from "@/lib/seo";
 
 const staticPaths = [
   "/",
@@ -38,7 +37,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls = entries.map((e) =>
           [
             "  <url>",
-            `    <loc>${BASE_URL}${e.path}</loc>`,
+            `    <loc>${absoluteUrl(e.path)}</loc>`,
             "    <changefreq>weekly</changefreq>",
             "  </url>",
           ].join("\n"),

@@ -27,6 +27,7 @@ export function ScrollVideoSection({
   const visibleRef = useRef(false);
   const resolvedCountRef = useRef(frameCount);
   const lastDrawnFrameRef = useRef(-1);
+  const loadFrameRef = useRef<(index: number) => void>(() => {});
 
   const [hasScrolled, setHasScrolled] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -101,28 +102,25 @@ export function ScrollVideoSection({
       activeImages = new Array(actualFrameCount);
       imagesRef.current = activeImages;
 
-      let nextFrame = 0;
-      const concurrency = mobileQuery.matches ? 3 : 5;
-      const loadNext = () => {
-        if (cancelled || nextFrame >= actualFrameCount) return;
-        const index = nextFrame++;
+      loadFrameRef.current = (requestedIndex: number) => {
+        const index = Math.min(actualFrameCount - 1, Math.max(0, requestedIndex));
+        if (cancelled || activeImages[index]) return;
         const image = new Image();
         const sourceFrame =
           Math.round((index / Math.max(1, actualFrameCount - 1)) * (fullCount - 1)) + 1;
         image.decoding = "async";
         image.onload = () => {
-          if (!cancelled) {
-            draw();
-            loadNext();
-          }
+          if (!cancelled) draw();
         };
-        image.onerror = () => {
-          if (!cancelled) loadNext();
-        };
+        image.onerror = () => {};
         activeImages[index] = image;
         image.src = `${dir}/frame-${pad(sourceFrame)}.jpg`;
       };
-      Array.from({ length: concurrency }, loadNext);
+
+      // Frames are requested only when the section enters the viewport and as
+      // the visitor scrolls. This avoids downloading hundreds of images on the
+      // homepage before the animation is seen.
+      if (visibleRef.current) loadFrameRef.current(0);
     };
 
     loadFrames();
@@ -132,6 +130,7 @@ export function ScrollVideoSection({
       cancelled = true;
       mobileQuery.removeEventListener("change", loadFrames);
       activeImages.forEach((image) => {
+        if (!image) return;
         image.onload = null;
         image.onerror = null;
       });
@@ -178,6 +177,11 @@ export function ScrollVideoSection({
       const total = rect.height - window.innerHeight;
       const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
       targetRef.current = p * (resolvedCountRef.current - 1);
+      const targetIndex = Math.round(targetRef.current);
+      loadFrameRef.current(targetIndex);
+      loadFrameRef.current(targetIndex + 1);
+      loadFrameRef.current(targetIndex - 1);
+      loadFrameRef.current(targetIndex + 2);
       if (p > 0.02) setHasScrolled(true);
       scheduleFrame();
     };

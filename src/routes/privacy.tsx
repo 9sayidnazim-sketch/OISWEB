@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/site/Section";
 import { JsonLd } from "@/components/site/JsonLd";
 import { site } from "@/lib/site";
-import { buildMeta, breadcrumbSchema } from "@/lib/seo";
+import { absoluteUrl, buildMeta, breadcrumbSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
   head: () =>
@@ -24,7 +24,7 @@ function PrivacyPage() {
           "@context": "https://schema.org",
           "@type": "WebPage",
           name: "Privacy Policy",
-          url: "/privacy",
+          url: absoluteUrl("/privacy"),
           about: { "@type": "Organization", name: site.legalName },
         }}
       />
@@ -34,7 +34,7 @@ function PrivacyPage() {
           { name: "Privacy Policy", path: "/privacy" },
         ])}
       />
-      <Section eyebrow="Legal" title="Privacy Policy">
+      <Section eyebrow="Legal" title="Privacy Policy" titleAs="h1">
         <div className="mx-auto max-w-3xl prose prose-neutral text-muted-foreground space-y-4">
           <p>
             This policy describes how Octapus L.L.C. collects, uses and protects information

@@ -15,7 +15,8 @@ import { LmsShowcase } from "@/components/site/LmsShowcase";
 import { HorusCard } from "@/components/site/HorusCard";
 import { products, productOisNotes, site } from "@/lib/site";
 import { trackEvent } from "@/lib/analytics";
-import { buildMeta, breadcrumbSchema } from "@/lib/seo";
+import { absoluteUrl, buildMeta, breadcrumbSchema } from "@/lib/seo";
+import { ConnectedServicesSection } from "@/components/site/ConnectedServicesSection";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/products/$slug")({
@@ -56,14 +57,16 @@ function ProductPage() {
   const p = Route.useLoaderData();
   const isOIS = p.slug === "ois";
   const isObms = p.slug === "obms-erp";
+  const isCustomAI = p.slug === "custom-ai";
 
   const [isHovered, setIsHovered] = useState(false);
   const [gifKey, setGifKey] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const heroVideoSrc =
-    p.slug === "ois"
+  const heroVideoSrc = isCustomAI
+    ? (p.image ?? null)
+    : p.slug === "ois"
       ? "/ois-video.mp4"
       : p.slug === "outreach"
         ? "/outreach-video.mp4"
@@ -102,7 +105,7 @@ function ProductPage() {
   };
 
   const handleMouseEnter = () => {
-    if (!heroVideoSrc) return;
+    if (!heroVideoSrc || isCustomAI) return;
     const isFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (isFinePointer) {
       startPlayback();
@@ -110,7 +113,7 @@ function ProductPage() {
   };
 
   const handleMouseLeave = () => {
-    if (!heroVideoSrc) return;
+    if (!heroVideoSrc || isCustomAI) return;
     const isFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (isFinePointer) {
       stopPlayback();
@@ -118,7 +121,7 @@ function ProductPage() {
   };
 
   useEffect(() => {
-    if (!heroVideoSrc || !cardRef.current) return;
+    if (!heroVideoSrc || isCustomAI || !cardRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -145,7 +148,7 @@ function ProductPage() {
     return () => {
       observer.disconnect();
     };
-  }, [heroVideoSrc]);
+  }, [heroVideoSrc, isCustomAI]);
 
   return (
     <>
@@ -157,15 +160,9 @@ function ProductPage() {
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           description: p.headline,
-          url: `/products/${p.slug}`,
-          ...(p.image ? { image: p.image } : {}),
-          offers: {
-            "@type": "Offer",
-            price: "0",
-            priceCurrency: "AED",
-            availability: "https://schema.org/InStock",
-          },
-          provider: { "@type": "Organization", name: site.legalName, url: "/" },
+          url: absoluteUrl(`/products/${p.slug}`),
+          ...(p.image ? { image: absoluteUrl(p.image) } : {}),
+          provider: { "@type": "Organization", name: site.legalName, url: absoluteUrl("/") },
           keywords: p.tags.join(", "),
         }}
       />
@@ -269,7 +266,7 @@ function ProductPage() {
                 ref={cardRef}
                 className={cn(
                   "relative flex aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border hairline bg-card p-6 text-center shadow-xl transition-[transform,box-shadow,border-color] duration-300 md:p-8",
-                  heroVideoSrc && "cursor-pointer",
+                  heroVideoSrc && !isCustomAI && "cursor-pointer",
                 )}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
@@ -290,13 +287,17 @@ function ProductPage() {
                       ref={videoRef}
                       src={heroVideoSrc}
                       autoPlay={p.slug === "lms"}
-                      loop={p.slug !== "ois"}
+                      loop={p.slug !== "ois" && !isCustomAI}
                       muted
                       playsInline
-                      preload="auto"
+                      preload={isCustomAI ? "metadata" : "none"}
+                      controls={isCustomAI}
+                      poster={isCustomAI ? "/optimized/custom-ai-poster-800.webp" : undefined}
+                      aria-label={isCustomAI ? "Custom AI product demonstration" : undefined}
                       className={cn(
-                        "absolute inset-0 size-full object-cover rounded-3xl transition-opacity duration-500 z-20 pointer-events-none",
-                        p.slug === "lms" || p.slug === "ois"
+                        "absolute inset-0 size-full object-cover rounded-3xl transition-opacity duration-500 z-20",
+                        isCustomAI ? "pointer-events-auto" : "pointer-events-none",
+                        p.slug === "lms" || p.slug === "ois" || isCustomAI
                           ? "opacity-100"
                           : isHovered
                             ? "opacity-100"
@@ -305,7 +306,7 @@ function ProductPage() {
                     />
                   ))}
 
-                {p.image && p.slug !== "lms" && p.slug !== "ois" ? (
+                {p.image && p.slug !== "lms" && p.slug !== "ois" && !isCustomAI ? (
                   <div
                     className={cn(
                       "relative z-10 flex items-center justify-center size-full p-6 md:p-10 transition-all duration-300",
@@ -318,6 +319,15 @@ function ProductPage() {
                       src={p.image}
                       alt={`${p.name} logo`}
                       loading="eager"
+                      decoding="async"
+                      width={800}
+                      height={800}
+                      srcSet={
+                        p.image.endsWith("-800.webp")
+                          ? `${p.image.replace("-800.webp", "-480.webp")} 480w, ${p.image} 800w`
+                          : undefined
+                      }
+                      sizes="(max-width: 1024px) 80vw, 40vw"
                       className="max-h-44 md:max-h-56 w-auto max-w-full object-contain"
                     />
                   </div>
@@ -359,6 +369,9 @@ function ProductPage() {
           ]}
         />
       ) : null}
+
+      {/* ── Connected Associated Services ── */}
+      <ConnectedServicesSection productSlug={p.slug} productName={p.name} />
 
       <RelatedLinks
         title="Related Octapus systems and services."

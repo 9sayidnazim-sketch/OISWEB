@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { absoluteUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/robots.txt")({
   server: {
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/robots.txt")({
           "User-agent: *",
           "Allow: /",
           "",
-          "Sitemap: https://octapus.ae/sitemap.xml",
+          `Sitemap: ${absoluteUrl("/sitemap.xml")}`,
         ].join("\n");
         return new Response(body, { headers: { "Content-Type": "text/plain" } });
       },

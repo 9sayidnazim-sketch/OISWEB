@@ -152,11 +152,14 @@ export function OctapusAdvantageSection() {
             {/* Background Video Element (Plays on hover or when at eye level) */}
             <video
               ref={videoRef}
-              src="/AI_building_software_rapidly_1080p_202608291401.mp4"
+              src={
+                isCard1Active ? "/AI_building_software_rapidly_1080p_202608291401.mp4" : undefined
+              }
               muted
               playsInline
               loop
-              preload="auto"
+              preload="none"
+              aria-hidden="true"
               className={cn(
                 "absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500 z-0",
                 isCard1Active ? "opacity-100" : "opacity-0",
@@ -281,11 +284,12 @@ export function OctapusAdvantageSection() {
             {/* Background Video Element (Plays on hover or when at eye level) */}
             <video
               ref={engineerVideoRef}
-              src="/Engineer_reviewing_code_at_works_202608291419.mp4"
+              src={isCard2Active ? "/Engineer_reviewing_code_at_works_202608291419.mp4" : undefined}
               muted
               playsInline
               loop
-              preload="auto"
+              preload="none"
+              aria-hidden="true"
               className={cn(
                 "absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500 z-0",
                 isCard2Active ? "opacity-100" : "opacity-0",

@@ -36,5 +36,16 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    files: [
+      "src/components/site/WhyItChangesSection.tsx",
+      "src/components/ui/{badge,button,form,navigation-menu,sidebar,toggle}.tsx",
+    ],
+    rules: {
+      // These shadcn-style modules intentionally export component helpers and
+      // variants beside the component API.
+      "react-refresh/only-export-components": "off",
+    },
+  },
   eslintPluginPrettier,
 );

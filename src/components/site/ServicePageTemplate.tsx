@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check, CircleDot, Layers3, LineChart, Monitor, Users } from "lucide-react";
 import { JsonLd } from "@/components/site/JsonLd";
 import { Container } from "@/components/site/Section";
+import { ConnectedProductsSection } from "@/components/site/ConnectedProductsSection";
 import { serviceBySlug, type ServiceIcon, type ServicePageData } from "@/lib/service-pages";
 import { site } from "@/lib/site";
 import { breadcrumbSchema } from "@/lib/seo";
@@ -170,6 +171,9 @@ export function ServicePageTemplate({ service }: { service: ServicePageData }) {
           </ul>
         </Container>
       </section>
+
+      {/* ── Connected Products & Solutions ── */}
+      <ConnectedProductsSection serviceSlug={service.slug} />
 
       <section aria-labelledby="related-heading" className="bg-white py-20 sm:py-28">
         <Container>

@@ -6,6 +6,7 @@ import { RevealButton } from "@/components/site/RevealButton";
 import { OisConnection } from "@/components/site/OisConnection";
 import { RelatedLinks } from "@/components/site/RelatedLinks";
 import { DeliveryTimeline } from "@/components/site/DeliveryTimeline";
+import { EngineeringConnectionsSection } from "@/components/site/EngineeringConnectionsSection";
 import { engineering, site } from "@/lib/site";
 import { buildMeta, breadcrumbSchema } from "@/lib/seo";
 
@@ -99,6 +100,8 @@ function EngineeringPage() {
         title="How a system gets tuned."
         intro="Every engagement follows the same predictable path, with a checkpoint at each stage."
       />
+
+      <EngineeringConnectionsSection />
 
       <OisConnection
         title="Engineering builds the machine. OIS keeps it aware."

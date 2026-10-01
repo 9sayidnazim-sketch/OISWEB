@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skiper39 } from "@/components/ui/skiper39";
 import { RevealButton } from "@/components/site/RevealButton";
 import { OisConnection } from "@/components/site/OisConnection";
+import { StudiosConnectionsSection } from "@/components/site/StudiosConnectionsSection";
 import { RelatedLinks } from "@/components/site/RelatedLinks";
 import { StudiosLeadForm } from "@/components/site/StudiosLeadForm";
 import { trackEvent } from "@/lib/analytics";
@@ -136,6 +137,8 @@ function StudiosPage() {
           "Growth you can explain",
         ]}
       />
+
+      <StudiosConnectionsSection />
 
       <Section
         id="start-a-studios-project"

@@ -126,25 +126,33 @@ function TeamPage() {
                     {member.bio}
                   </p>
 
-                  <div className="mt-6 flex flex-col gap-2">
-                    <RevealButton
-                      to={`tel:${member.phone.replace(/\s/g, "")}`}
-                      external
-                      icon={Phone}
-                      label={member.phone}
-                      variant="outline"
-                      className="self-start"
+                  <div className="mt-6 flex flex-col gap-2.5 pt-4 border-t hairline">
+                    <a
+                      href={`tel:${member.phone.replace(/\s/g, "")}`}
                       onClick={() => trackEvent("call_click", { member: member.name })}
-                    />
-                    <RevealButton
-                      to={`mailto:${member.email}`}
-                      external
-                      icon={Mail}
-                      label={member.email}
-                      variant="outline"
-                      className="self-start"
+                      className="inline-flex items-center gap-2.5 text-sm font-semibold text-foreground hover:text-primary transition-colors py-0.5 group/contact"
+                      aria-label={`Call ${member.name} at ${member.phone}`}
+                    >
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full border hairline bg-muted/60 text-foreground group-hover/contact:border-primary group-hover/contact:text-primary transition-colors">
+                        <Phone className="size-3.5" />
+                      </span>
+                      <span className="text-foreground font-mono text-xs sm:text-sm font-semibold tracking-wide">
+                        {member.phone}
+                      </span>
+                    </a>
+                    <a
+                      href={`mailto:${member.email}`}
                       onClick={() => trackEvent("email_click", { member: member.name })}
-                    />
+                      className="inline-flex items-center gap-2.5 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors py-0.5 group/contact"
+                      aria-label={`Email ${member.name} at ${member.email}`}
+                    >
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full border hairline bg-muted/60 text-muted-foreground group-hover/contact:border-primary group-hover/contact:text-primary transition-colors">
+                        <Mail className="size-3.5" />
+                      </span>
+                      <span className="truncate">
+                        {member.email}
+                      </span>
+                    </a>
                   </div>
                 </div>
               </article>

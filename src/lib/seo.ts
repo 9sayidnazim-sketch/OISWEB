@@ -5,7 +5,7 @@
 
 export const SITE_NAME = "Octapus";
 export const SITE_TAGLINE = "Software, AI and Business Systems — UAE";
-export const SITE_URL = "https://octapus.ae";
+export const SITE_URL = (import.meta.env.VITE_SITE_URL || "https://octapus.ae").replace(/\/$/, "");
 
 export function absoluteUrl(path: string) {
   if (!path) return SITE_URL;

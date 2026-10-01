@@ -1,17 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import * as React from "react";
 import { JsonLd } from "@/components/site/JsonLd";
-import { ScrollVideoSection } from "@/components/site/ScrollVideoSection";
 import { Section } from "@/components/site/Section";
 import { site, products, hiddenProductSlugs, stats } from "@/lib/site";
-import { buildMeta, breadcrumbSchema } from "@/lib/seo";
+import { absoluteUrl, buildMeta, breadcrumbSchema } from "@/lib/seo";
 import { ArrowRight, Grid3X3, Mail } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 
 import { WhatWeBuildSection } from "@/components/site/WhatWeBuildSection";
-import { OctapusAdvantageSection } from "@/components/site/OctapusAdvantageSection";
-import { BuildProcessSection } from "@/components/site/BuildProcessSection";
+import { DeferredRender } from "@/components/site/DeferredRender";
 import { RevealButton } from "@/components/site/RevealButton";
 import { servicePages } from "@/lib/service-pages";
 
@@ -32,6 +29,27 @@ const FALLBACK_IMAGES = [
 ];
 
 const visibleProducts = products.filter((p) => !hiddenProductSlugs.includes(p.slug));
+
+const LazyScrollVideoSection = React.lazy(() =>
+  import("@/components/site/ScrollVideoSection").then((module) => ({
+    default: module.ScrollVideoSection,
+  })),
+);
+const LazyCoverflowCarousel = React.lazy(() =>
+  import("@/components/ui/coverflow-carousel").then((module) => ({
+    default: module.CoverflowCarousel,
+  })),
+);
+const LazyOctapusAdvantageSection = React.lazy(() =>
+  import("@/components/site/OctapusAdvantageSection").then((module) => ({
+    default: module.OctapusAdvantageSection,
+  })),
+);
+const LazyBuildProcessSection = React.lazy(() =>
+  import("@/components/site/BuildProcessSection").then((module) => ({
+    default: module.BuildProcessSection,
+  })),
+);
 
 const statGridVariants = {
   hidden: {},
@@ -74,7 +92,6 @@ export const Route = createFileRoute("/")({
         "creative production",
       ],
     }),
-    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });
@@ -100,7 +117,7 @@ function Home() {
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Octapus",
-          url: "/",
+          url: absoluteUrl("/"),
           publisher: { "@type": "Organization", name: site.legalName },
         }}
       />
@@ -116,7 +133,7 @@ function Home() {
               "@type": "Service",
               name: service.title,
               description: service.summary,
-              url: `/services/${service.slug}`,
+              url: absoluteUrl(`/services/${service.slug}`),
               provider: { "@type": "Organization", name: site.legalName },
             },
           })),
@@ -130,7 +147,7 @@ function Home() {
           itemListElement: visibleProducts.slice(0, 8).map((p, i) => ({
             "@type": "ListItem",
             position: i + 1,
-            url: `/products/${p.slug}`,
+            url: absoluteUrl(`/products/${p.slug}`),
             name: p.name,
           })),
         }}
@@ -221,7 +238,11 @@ function Home() {
       </header>
 
       {/* ── 02. VIDEO SECTION ── */}
-      <ScrollVideoSection frameCount={600} mobileFrameCount={530} heightMultiplier={4} />
+      <DeferredRender minHeight="400svh">
+        <React.Suspense fallback={<div className="h-[400svh] bg-background" />}>
+          <LazyScrollVideoSection frameCount={600} mobileFrameCount={530} heightMultiplier={4} />
+        </React.Suspense>
+      </DeferredRender>
 
       {/* ── 03. WHAT WE BUILD ── */}
       <WhatWeBuildSection />
@@ -234,14 +255,21 @@ function Home() {
         className="bg-background relative overflow-hidden"
       >
         <div className="w-full overflow-hidden mt-4">
-          <CoverflowCarousel
-            slides={carouselSlides}
-            showCaption
-            showNavigation
-            onSlideClick={(index) => {
-              navigate({ to: "/products/$slug", params: { slug: visibleProducts[index].slug } });
-            }}
-          />
+          <DeferredRender minHeight="360px" rootMargin="200px">
+            <React.Suspense fallback={<div className="h-[360px] rounded-2xl bg-muted" />}>
+              <LazyCoverflowCarousel
+                slides={carouselSlides}
+                showCaption
+                showNavigation
+                onSlideClick={(index) => {
+                  navigate({
+                    to: "/products/$slug",
+                    params: { slug: visibleProducts[index].slug },
+                  });
+                }}
+              />
+            </React.Suspense>
+          </DeferredRender>
         </div>
 
         {/* Integrated Trust Metrics */}
@@ -279,10 +307,18 @@ function Home() {
       </Section>
 
       {/* ── 05. THE OCTAPUS ADVANTAGE ── */}
-      <OctapusAdvantageSection />
+      <DeferredRender minHeight="900px" rootMargin="300px">
+        <React.Suspense fallback={<div className="h-[900px] bg-background" />}>
+          <LazyOctapusAdvantageSection />
+        </React.Suspense>
+      </DeferredRender>
 
       {/* ── 05. OUR BUILD PROCESS ── */}
-      <BuildProcessSection />
+      <DeferredRender minHeight="800px" rootMargin="300px">
+        <React.Suspense fallback={<div className="h-[800px] bg-background" />}>
+          <LazyBuildProcessSection />
+        </React.Suspense>
+      </DeferredRender>
 
       {/* ── 06. CLOSING CTA ── */}
       <Section className="bg-surface dark:bg-surface-dark border-t border-hairline relative overflow-hidden py-24 md:py-32">
