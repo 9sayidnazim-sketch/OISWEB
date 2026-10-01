@@ -138,34 +138,34 @@ function Home() {
       <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }])} />
 
       {/* ── 01. HERO ── */}
-      <header className="relative isolate overflow-hidden border-b border-black/[0.06] bg-white text-black">
+      <header className="relative isolate overflow-hidden border-b border-border bg-background text-foreground">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle,#242424_0.7px,transparent_0.8px)] bg-[size:24px_24px] opacity-[0.22]"
+          className="absolute inset-0 bg-[radial-gradient(circle,currentColor_0.7px,transparent_0.8px)] bg-[size:24px_24px] opacity-[0.12]"
         />
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 aspect-square w-[min(82vw,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/[0.055]"
+          className="absolute left-1/2 top-1/2 aspect-square w-[min(82vw,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/[0.055]"
         />
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 aspect-square w-[min(60vw,35rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/[0.055]"
+          className="absolute left-1/2 top-1/2 aspect-square w-[min(60vw,35rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/[0.055]"
         />
         <motion.span
           aria-hidden="true"
-          className="absolute left-[18%] top-[31%] size-2 rounded-full bg-[#222]"
+          className="absolute left-[18%] top-[31%] size-2 rounded-full bg-foreground"
           animate={reducedMotion ? undefined : { y: [0, -10, 0], x: [0, 4, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.span
           aria-hidden="true"
-          className="absolute right-[16%] top-[36%] size-3 rounded-full bg-[#222]"
+          className="absolute right-[16%] top-[36%] size-3 rounded-full bg-foreground"
           animate={reducedMotion ? undefined : { y: [0, 12, 0], x: [0, -6, 0] }}
           transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.span
           aria-hidden="true"
-          className="absolute bottom-[22%] right-[25%] size-1.5 rounded-full bg-[#222]"
+          className="absolute bottom-[22%] right-[25%] size-1.5 rounded-full bg-foreground"
           animate={reducedMotion ? undefined : { y: [0, -8, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -177,13 +177,13 @@ function Home() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 flex w-full max-w-6xl flex-col items-center text-center"
           >
-            <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-black/60 sm:text-xs">
+            <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground sm:text-xs">
               Custom software development
             </p>
-            <h1 className="mt-6 text-balance font-display text-[clamp(4rem,10vw,9rem)] font-black leading-[0.82] tracking-[-0.065em] text-black">
+            <h1 className="mt-6 text-balance font-display text-[clamp(4rem,10vw,9rem)] font-black leading-[0.82] tracking-[-0.065em] text-foreground">
               Build for <span className="galaxy-text">Today</span>
             </h1>
-            <p className="mt-8 max-w-[58ch] text-pretty text-base leading-7 text-black/60 sm:text-lg lg:text-xl lg:leading-8">
+            <p className="mt-8 max-w-[58ch] text-pretty text-base leading-7 text-muted-foreground sm:text-lg lg:text-xl lg:leading-8">
               Practical software, mobile apps, ERP systems and digital platforms built around the
               way your business works.
             </p>
@@ -193,27 +193,27 @@ function Home() {
                 <Link
                   to="/book"
                   aria-label="Start a project"
-                  className="group flex size-16 items-center justify-center rounded-full bg-[#171717] text-white shadow-[0_16px_34px_-20px_rgba(0,0,0,0.75)] transition-transform duration-300 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
+                  className="group flex size-16 items-center justify-center rounded-full bg-foreground text-background shadow-[0_16px_34px_-20px_color-mix(in_oklab,var(--color-foreground)_75%,transparent)] transition-transform duration-300 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
                 >
                   <ArrowRight
                     className="size-5 transition-transform duration-300 group-hover:translate-x-1 sm:size-6"
                     aria-hidden="true"
                   />
                 </Link>
-                <span className="text-sm font-semibold text-black">Start a project</span>
+                <span className="text-sm font-semibold text-foreground">Start a project</span>
               </div>
               <div className="flex w-24 flex-col items-center gap-3 sm:w-32">
                 <a
                   href="#services"
                   aria-label="Explore services"
-                  className="group flex size-16 items-center justify-center rounded-full border border-black/30 bg-white text-black transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
+                  className="group flex size-16 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 active:translate-y-0 sm:size-20"
                 >
                   <Grid3X3
                     className="size-5 transition-transform duration-300 group-hover:rotate-12 sm:size-6"
                     aria-hidden="true"
                   />
                 </a>
-                <span className="text-sm font-semibold text-black">Explore services</span>
+                <span className="text-sm font-semibold text-foreground">Explore services</span>
               </div>
             </div>
           </motion.div>

@@ -54,7 +54,7 @@ export function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0.01 : 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="octapus-loading-screen fixed inset-0 z-[99999] grid place-items-center bg-white"
+          className="octapus-loading-screen fixed inset-0 z-[99999] grid place-items-center bg-background"
           role="status"
           aria-label="Loading Octapus"
         >

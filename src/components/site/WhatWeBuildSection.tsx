@@ -1,19 +1,44 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  Blocks,
+  Camera,
+  ChartNoAxesCombined,
+  Globe2,
+  Lightbulb,
+  Megaphone,
+  Smartphone,
+  UsersRound,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { servicePages } from "@/lib/service-pages";
+import type { CSSProperties } from "react";
 
 const serviceCardPalettes = [
-  { background: "#DDE7FF", accent: "#EEF3FF" },
-  { background: "#FFE2D5", accent: "#FFF2EC" },
-  { background: "#EBF7C9", accent: "#F6FBE8" },
-  { background: "#D7F2E8", accent: "#EEFAF5" },
-  { background: "#E8DDFC", accent: "#F5F0FF" },
-  { background: "#FFF0C9", accent: "#FFF8E6" },
-  { background: "#FADCE7", accent: "#FFF0F5" },
-  { background: "#D8EEF7", accent: "#ECF8FC" },
-  { background: "#E8E9ED", accent: "#F5F5F7" },
+  "#5B7CFA",
+  "#F06449",
+  "#69A83B",
+  "#16A085",
+  "#8A58DC",
+  "#D88A18",
+  "#D84D81",
+  "#168DB7",
+  "#637083",
 ] as const;
+
+const serviceIcons: Record<string, LucideIcon> = {
+  mobile: Smartphone,
+  software: Blocks,
+  erp: ChartNoAxesCombined,
+  automation: Workflow,
+  systems: UsersRound,
+  web: Globe2,
+  marketing: Megaphone,
+  production: Camera,
+  consulting: Lightbulb,
+};
 
 export function WhatWeBuildSection() {
   const reducedMotion = useReducedMotion();
@@ -41,7 +66,8 @@ export function WhatWeBuildSection() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {servicePages.map((service, index) => {
-            const palette = serviceCardPalettes[index % serviceCardPalettes.length];
+            const accent = serviceCardPalettes[index % serviceCardPalettes.length];
+            const Icon = serviceIcons[service.scene] ?? Blocks;
 
             return (
               <motion.article
@@ -60,30 +86,33 @@ export function WhatWeBuildSection() {
                 >
                   <motion.div
                     whileHover={reducedMotion ? undefined : { y: -5 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative flex h-full min-h-[26rem] flex-col overflow-hidden rounded-[1.6rem] p-5 text-[#17191f] shadow-[0_22px_48px_-36px_rgba(15,23,42,0.38)] sm:p-6"
-                    style={{ backgroundColor: palette.background }}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                    className="service-card relative flex h-full min-h-[25rem] flex-col overflow-hidden rounded-[1.6rem] border p-5 text-card-foreground transition-[box-shadow,border-color] duration-200 sm:p-6"
+                    style={{ "--service-accent": accent } as CSSProperties}
                   >
                     <div
                       aria-hidden="true"
-                      className="absolute -right-20 -top-24 size-64 rounded-full opacity-25 blur-3xl"
-                      style={{ backgroundColor: palette.accent }}
+                      className="service-card-glow absolute -right-20 -top-24 size-64 rounded-full blur-3xl"
                     />
 
                     <div className="relative flex items-start justify-between gap-5">
-                      <p className="max-w-[18ch] text-[0.65rem] font-semibold uppercase leading-4 tracking-[0.14em] text-black/60">
-                        {service.category}
-                      </p>
-                      <span className="font-mono text-[0.68rem] font-semibold tabular-nums text-black/55">
+                      <span className="service-card-icon grid size-12 place-items-center rounded-2xl transition-transform duration-200 group-hover:scale-105 group-hover:rotate-3">
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                      <span className="font-mono text-[0.68rem] font-semibold tabular-nums text-muted-foreground">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
 
-                    <h3 className="relative mt-10 max-w-[11ch] text-[clamp(2rem,3vw,2.8rem)] font-bold leading-[0.92] tracking-[-0.055em]">
+                    <p className="relative mt-7 max-w-[20ch] text-[0.65rem] font-semibold uppercase leading-4 tracking-[0.14em] text-muted-foreground">
+                      {service.category}
+                    </p>
+
+                    <h3 className="relative mt-3 max-w-[13ch] text-[clamp(1.9rem,3vw,2.65rem)] font-bold leading-[0.94] tracking-[-0.055em]">
                       {service.title}
                     </h3>
 
-                    <p className="relative mt-4 max-w-[38ch] text-sm font-medium leading-5 text-black/65">
+                    <p className="relative mt-4 max-w-[38ch] text-sm font-medium leading-5 text-muted-foreground">
                       {service.summary}
                     </p>
 
@@ -91,16 +120,16 @@ export function WhatWeBuildSection() {
                       {service.keywords.slice(0, 2).map((keyword) => (
                         <span
                           key={keyword}
-                          className="rounded-full border border-black/10 bg-white/45 px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em]"
+                          className="rounded-full border border-foreground/10 bg-background/45 px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em]"
                         >
                           {keyword}
                         </span>
                       ))}
                     </div>
 
-                    <div className="relative flex items-center justify-between gap-4 rounded-[1rem] border border-black/[0.07] bg-white/65 px-4 py-3.5 text-[#17191f] backdrop-blur-sm">
+                    <div className="relative flex items-center justify-between gap-4 rounded-[1rem] border border-foreground/10 bg-background/65 px-4 py-3.5 text-card-foreground backdrop-blur-sm">
                       <span className="text-sm font-semibold leading-tight">Explore service</span>
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#17191f] text-white transition-transform duration-300 group-hover:rotate-45 group-hover:bg-primary">
+                      <span className="service-card-action flex size-8 shrink-0 items-center justify-center rounded-full text-primary-foreground transition-transform duration-200 group-hover:rotate-45">
                         <ArrowUpRight className="size-4" aria-hidden="true" />
                       </span>
                     </div>

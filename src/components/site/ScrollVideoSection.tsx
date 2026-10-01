@@ -228,7 +228,7 @@ export function ScrollVideoSection({
         <DotPattern className="z-0 fill-neutral-400/45 animate-scrolling-dots motion-reduce:animate-none dark:fill-white/10" />
 
         <motion.div
-          className="relative z-10 h-full w-full overflow-hidden border-[7px] border-black bg-white will-change-transform md:border-[9px] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35),0_12px_30px_-5px_rgba(0,0,0,0.2)] dark:shadow-[0_30px_70px_-10px_rgba(0,0,0,0.85),0_15px_35px_-5px_rgba(0,0,0,0.65)]"
+          className="relative z-10 h-full w-full overflow-hidden border-[7px] border-foreground bg-card will-change-transform md:border-[9px] shadow-[0_25px_60px_-10px_color-mix(in_oklab,var(--color-foreground)_35%,transparent),0_12px_30px_-5px_color-mix(in_oklab,var(--color-foreground)_20%,transparent)]"
           style={{
             scale: revealScale,
             borderRadius: revealRadius,
@@ -237,13 +237,13 @@ export function ScrollVideoSection({
         >
           <canvas
             ref={canvasRef}
-            className="block h-full w-full bg-white"
+            className="block h-full w-full bg-card"
             style={{ filter: "brightness(1.13) contrast(1.14) saturate(0.96)" }}
           />
 
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -top-px left-1/2 z-20 flex h-4 w-14 -translate-x-1/2 items-center justify-center rounded-b-[10px] bg-black md:h-5 md:w-[72px] md:rounded-b-xl"
+            className="pointer-events-none absolute -top-px left-1/2 z-20 flex h-4 w-14 -translate-x-1/2 items-center justify-center rounded-b-[10px] bg-foreground md:h-5 md:w-[72px] md:rounded-b-xl"
           >
             <span className="h-[5px] w-[5px] rounded-full bg-[#101218] ring-1 ring-white/20 shadow-[inset_0_0_2px_rgba(80,160,255,0.7)]" />
           </div>

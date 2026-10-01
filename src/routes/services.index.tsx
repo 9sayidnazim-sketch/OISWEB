@@ -63,7 +63,7 @@ function ServicesPage() {
           {servicePages.map((service) => (
             <article
               key={service.slug}
-              className="group overflow-hidden rounded-[1.5rem] border border-black/[0.07] bg-white shadow-[0_24px_54px_-44px_rgba(0,0,0,.48)]"
+              className="group overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[0_24px_54px_-44px_color-mix(in_oklab,var(--color-foreground)_48%,transparent)]"
             >
               <Link
                 to="/services/$slug"

@@ -620,6 +620,43 @@
   filter: drop-shadow(0 0 16px rgb(96 28 230 / 0.34)) drop-shadow(0 0 32px rgb(197 105 255 / 0.12));
 }
 
+.service-card {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--service-accent) 18%, var(--color-card)),
+    var(--color-card) 72%
+  );
+  border-color: color-mix(in oklab, var(--service-accent) 32%, var(--color-border));
+  box-shadow: 0 20px 44px -34px color-mix(in oklab, var(--service-accent) 52%, transparent);
+}
+
+.service-card-glow {
+  background: var(--service-accent);
+  opacity: 0.18;
+}
+
+.service-card-icon,
+.service-card-action {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--service-accent) 88%, #2a1747),
+    color-mix(in oklab, var(--service-accent) 70%, #1b1530)
+  );
+  color: white;
+  box-shadow: 0 10px 22px -14px color-mix(in oklab, var(--service-accent) 88%, transparent);
+}
+
+@media (hover: hover) {
+  .service-card:hover {
+    border-color: color-mix(in oklab, var(--service-accent) 68%, var(--color-border));
+    box-shadow: 0 30px 60px -36px color-mix(in oklab, var(--service-accent) 75%, transparent);
+  }
+
+  .service-card:hover .service-card-glow {
+    opacity: 0.32;
+  }
+}
+
 @keyframes galaxy-drift {
   0% {
     background-position:
@@ -643,8 +680,12 @@
 
 .octapus-loading-screen {
   --loading-dot: 22px;
-  background-color: #fff;
-  background-image: radial-gradient(circle, #b9b4d6 1px, transparent 1.6px);
+  background-color: var(--color-background);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-primary) 32%, transparent) 1px,
+    transparent 1.6px
+  );
   background-position: 0 0;
   background-size: var(--loading-dot) var(--loading-dot);
   animation: octapus-loading-drift 3s linear infinite;

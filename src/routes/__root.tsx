@@ -17,7 +17,7 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { LoadingScreen } from "@/components/site/LoadingScreen";
 import { site } from "@/lib/site";
-import { getGstTheme, THEME_STORAGE_KEY } from "@/lib/theme";
+import { THEME_STORAGE_KEY } from "@/lib/theme";
 
 function NotFoundComponent() {
   return (
@@ -133,13 +133,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        {/* Theme: set before first paint based on user override or GST time */}
+        {/* Theme: set before first paint from the stored choice or system preference. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{const t=localStorage.getItem('octapus-theme');if(t==='dark'){document.documentElement.classList.add('dark');}else if(t==='light'){document.documentElement.classList.remove('dark');}else{const h=(new Date().getUTCHours()+4)%24;if(h<6||h>=18){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}}catch(e){}})();`,
+            __html: `(function(){try{const t=localStorage.getItem('octapus-theme');const dark=t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);}catch(e){}})();`,
           }}
         />
         {/* Consent Mode v2 default (denied) — bootstraps before GTM loads */}
@@ -150,6 +150,12 @@ function RootShell({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <a
+          href="#main"
+          className="sr-only fixed left-4 top-4 z-[1000] rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg focus:not-sr-only focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
+          Skip to content
+        </a>
         {children}
         <Scripts />
       </body>
@@ -176,22 +182,19 @@ function RootComponent() {
   }, []);
 
   useEffect(() => {
-    const syncGstTheme = () => {
+    const preference = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => {
       try {
         if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-          const isDark = getGstTheme() === "dark";
-          if (document.documentElement.classList.contains("dark") !== isDark) {
-            document.documentElement.classList.toggle("dark", isDark);
-          }
+          document.documentElement.classList.toggle("dark", preference.matches);
         }
       } catch {
-        // ignore storage errors
+        // Keep the initial system preference when storage is unavailable.
       }
     };
 
-    syncGstTheme();
-    const interval = setInterval(syncGstTheme, 10000);
-    return () => clearInterval(interval);
+    preference.addEventListener("change", syncSystemTheme);
+    return () => preference.removeEventListener("change", syncSystemTheme);
   }, []);
 
   return (

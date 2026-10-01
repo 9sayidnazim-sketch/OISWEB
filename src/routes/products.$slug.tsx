@@ -268,7 +268,7 @@ function ProductPage() {
               <div
                 ref={cardRef}
                 className={cn(
-                  "relative flex aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border hairline bg-white p-6 text-center shadow-xl transition-[transform,box-shadow,border-color] duration-300 md:p-8",
+                  "relative flex aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border hairline bg-card p-6 text-center shadow-xl transition-[transform,box-shadow,border-color] duration-300 md:p-8",
                   heroVideoSrc && "cursor-pointer",
                 )}
                 onMouseEnter={handleMouseEnter}
